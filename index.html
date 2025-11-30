@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Would Nishant Say?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* Floating particles background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(139, 92, 246, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        .particle:nth-child(odd) {
+            background: rgba(236, 72, 153, 0.3);
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .title {
+            text-align: center;
+        }
+
+        .title h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #f8f8f8 0%, #a78bfa 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            line-height: 1.1;
+        }
+
+        .title p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* The 8-Ball */
+        .eight-ball-container {
+            perspective: 1000px;
+        }
+
+        .eight-ball {
+            width: clamp(260px, 70vw, 320px);
+            height: clamp(260px, 70vw, 320px);
+            background: radial-gradient(circle at 30% 30%, #4a4a4a 0%, #1a1a1a 50%, #000000 100%);
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            box-shadow:
+                inset -20px -20px 40px rgba(0, 0, 0, 0.8),
+                inset 10px 10px 30px rgba(255, 255, 255, 0.1),
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 80px rgba(139, 92, 246, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .eight-ball:hover {
+            box-shadow:
+                inset -20px -20px 40px rgba(0, 0, 0, 0.8),
+                inset 10px 10px 30px rgba(255, 255, 255, 0.1),
+                0 25px 70px rgba(0, 0, 0, 0.6),
+                0 0 100px rgba(139, 92, 246, 0.4);
+        }
+
+        .eight-ball.shaking {
+            animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg) translateX(0); }
+            10% { transform: rotate(-8deg) translateX(-10px); }
+            20% { transform: rotate(8deg) translateX(10px); }
+            30% { transform: rotate(-8deg) translateX(-10px); }
+            40% { transform: rotate(8deg) translateX(10px); }
+            50% { transform: rotate(-4deg) translateX(-5px); }
+            60% { transform: rotate(4deg) translateX(5px); }
+            70% { transform: rotate(-2deg) translateX(-2px); }
+            80% { transform: rotate(2deg) translateX(2px); }
+            90% { transform: rotate(0deg) translateX(0); }
+        }
+
+        /* The window/viewport */
+        .window {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 55%;
+            height: 55%;
+            background: radial-gradient(circle, #1e3a5f 0%, #0a1628 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                inset 0 0 30px rgba(0, 0, 0, 0.8),
+                inset 0 0 60px rgba(30, 58, 95, 0.5);
+            overflow: hidden;
+        }
+
+        /* The triangle */
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 100px solid #1e40af;
+            position: relative;
+            filter: drop-shadow(0 0 10px rgba(30, 64, 175, 0.5));
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .triangle::before {
+            content: '8';
+            position: absolute;
+            top: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .triangle.hidden {
+            opacity: 0;
+        }
+
+        /* Response text */
+        .response {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 85%;
+            text-align: center;
+            color: #7dd3fc;
+            font-size: clamp(0.75rem, 3vw, 0.95rem);
+            font-weight: 500;
+            line-height: 1.4;
+            text-shadow: 0 0 20px rgba(125, 211, 252, 0.5);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            padding: 10px;
+        }
+
+        .response.visible {
+            opacity: 1;
+        }
+
+        .response.yes {
+            color: #86efac;
+            text-shadow: 0 0 20px rgba(134, 239, 172, 0.5);
+        }
+
+        .response.no {
+            color: #fca5a5;
+            text-shadow: 0 0 20px rgba(252, 165, 165, 0.5);
+        }
+
+        .response.maybe {
+            color: #fde047;
+            text-shadow: 0 0 20px rgba(253, 224, 71, 0.5);
+        }
+
+        /* Instructions */
+        .instructions {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .instructions .action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(139, 92, 246, 0.2);
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .instructions .action:hover {
+            background: rgba(139, 92, 246, 0.3);
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+
+        .instructions .icon {
+            font-size: 1.2rem;
+        }
+
+        .hint {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 8px;
+        }
+
+        /* Question input area */
+        .question-area {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .question-input {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .question-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .question-input:focus {
+            border-color: rgba(139, 92, 246, 0.5);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.75rem;
+        }
+
+        .footer span {
+            color: #ec4899;
+        }
+
+        /* Mobile shake detection hint */
+        @media (max-width: 768px) {
+            .hint::after {
+                content: ' or shake your phone';
+            }
+        }
+
+        /* Glow pulse animation for idle state */
+        .eight-ball.idle {
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow:
+                    inset -20px -20px 40px rgba(0, 0, 0, 0.8),
+                    inset 10px 10px 30px rgba(255, 255, 255, 0.1),
+                    0 20px 60px rgba(0, 0, 0, 0.5),
+                    0 0 80px rgba(139, 92, 246, 0.2);
+            }
+            50% {
+                box-shadow:
+                    inset -20px -20px 40px rgba(0, 0, 0, 0.8),
+                    inset 10px 10px 30px rgba(255, 255, 255, 0.1),
+                    0 20px 60px rgba(0, 0, 0, 0.5),
+                    0 0 120px rgba(139, 92, 246, 0.4);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles -->
+    <div class="particles" id="particles"></div>
+
+    <div class="container">
+        <div class="title">
+            <h1>What Would Nishant Say?</h1>
+            <p>The Oracle of Real Talk</p>
+        </div>
+
+        <div class="question-area">
+            <input
+                type="text"
+                class="question-input"
+                placeholder="Ask your question..."
+                id="questionInput"
+            >
+        </div>
+
+        <div class="eight-ball-container">
+            <div class="eight-ball idle" id="eightBall">
+                <div class="window">
+                    <div class="triangle" id="triangle"></div>
+                    <div class="response" id="response"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <div class="action">
+                <span class="icon">👆</span>
+                <span>Tap the ball for wisdom</span>
+            </div>
+            <p class="hint">Think of your question first</p>
+        </div>
+
+        <div class="footer">
+            Made with <span>♥</span> and brutal honesty
+        </div>
+    </div>
+
+    <script>
+        // Nishant's responses
+        const responses = {
+            yes: [
+                "Yes. Do it before you overthink it.",
+                "This is a green light. Now pick a date.",
+                "You already decided; you're just asking for permission.",
+                "Do it, but do it like you mean it.",
+                "This is a 'hell yes.' Act accordingly.",
+                "Yes—with intention, not on autopilot."
+            ],
+            no: [
+                "Not your fucking problem.",
+                "No. Your calendar is already screaming.",
+                "No. This is ego, not impact.",
+                "Hard pass. Not your job, not your season.",
+                "People don't change. Believe their track record.",
+                "You're adding complexity to avoid a simple no."
+            ],
+            maybe: [
+                "Not now. Let this marinate for a week.",
+                "Pause. The idea is fine; the timing isn't.",
+                "You're asking the wrong question. Try: 'What am I really solving for?'",
+                "Is this fear or a real constraint?",
+                "Flip a coin. Notice how you feel while it's in the air.",
+                "You're in 51–49 territory. Choose, then make it the right decision."
+            ]
+        };
+
+        // DOM elements
+        const eightBall = document.getElementById('eightBall');
+        const triangle = document.getElementById('triangle');
+        const responseEl = document.getElementById('response');
+        const questionInput = document.getElementById('questionInput');
+
+        let isShaking = false;
+
+        // Get random response
+        function getRandomResponse() {
+            const categories = Object.keys(responses);
+            const category = categories[Math.floor(Math.random() * categories.length)];
+            const categoryResponses = responses[category];
+            const response = categoryResponses[Math.floor(Math.random() * categoryResponses.length)];
+            return { text: response, category };
+        }
+
+        // Shake the ball
+        function shakeBall() {
+            if (isShaking) return;
+            isShaking = true;
+
+            // Remove idle animation
+            eightBall.classList.remove('idle');
+
+            // Hide response, show triangle
+            responseEl.classList.remove('visible');
+            triangle.classList.remove('hidden');
+
+            // Add shake animation
+            eightBall.classList.add('shaking');
+
+            // After shake, show response
+            setTimeout(() => {
+                eightBall.classList.remove('shaking');
+
+                // Get and display response
+                const { text, category } = getRandomResponse();
+
+                // Hide triangle
+                triangle.classList.add('hidden');
+
+                // Set response text and category color
+                responseEl.textContent = text;
+                responseEl.className = 'response';
+                responseEl.classList.add(category);
+
+                // Show response with slight delay
+                setTimeout(() => {
+                    responseEl.classList.add('visible');
+                    isShaking = false;
+
+                    // Re-add idle animation after a delay
+                    setTimeout(() => {
+                        if (!isShaking) {
+                            eightBall.classList.add('idle');
+                        }
+                    }, 3000);
+                }, 200);
+
+            }, 600);
+        }
+
+        // Click handler
+        eightBall.addEventListener('click', shakeBall);
+
+        // Enter key on input
+        questionInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                shakeBall();
+            }
+        });
+
+        // Mobile shake detection
+        let lastShakeTime = 0;
+        const SHAKE_THRESHOLD = 15;
+        const SHAKE_TIMEOUT = 1000;
+
+        if (window.DeviceMotionEvent) {
+            window.addEventListener('devicemotion', (e) => {
+                const acceleration = e.accelerationIncludingGravity;
+                if (!acceleration) return;
+
+                const totalAcceleration = Math.sqrt(
+                    Math.pow(acceleration.x || 0, 2) +
+                    Math.pow(acceleration.y || 0, 2) +
+                    Math.pow(acceleration.z || 0, 2)
+                );
+
+                const now = Date.now();
+                if (totalAcceleration > SHAKE_THRESHOLD && now - lastShakeTime > SHAKE_TIMEOUT) {
+                    lastShakeTime = now;
+                    shakeBall();
+                }
+            });
+        }
+
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        createParticles();
+    </script>
+</body>
+</html>
